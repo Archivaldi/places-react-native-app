@@ -9,6 +9,13 @@ function PlaceDetailsScreen() {
     );
 }
 
+PlaceDetailsScreen.navigationOptions = data => {
+    const placeTitle = data.navigation.getParam("placeTitle");
+    return {
+        headerTitle: placeTitle
+    }
+};
+
 const styles = StyleSheet.create({
     
 })

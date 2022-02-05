@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from "react-native";
 import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
-import * as placesActions from "../store/reducers/places";
+import * as placesActions from "../store/actions/places";
 
 function NewPlaceScreen(props) {
     const [titleValue, setTitleValue] = useState('');
