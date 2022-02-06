@@ -1,5 +1,5 @@
 import Place from "../../models/Place";
-import { ADD_PLACE } from "../actions/places";
+import { ADD_PLACE, DELETE_PLACE, SET_PLACES } from "../actions/places";
 const initialState = {
     places: []
 };
@@ -7,11 +7,26 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type){
         case ADD_PLACE: 
-            const newPlace = new Place(new Date().toString(), action.placeData.title);
+            const newPlace = new Place(action.placeData.id.toString(), action.placeData.title, action.placeData.image);
             return {
                 ...state,
                 places: state.places.concat(newPlace)
             }
+        case SET_PLACES: 
+            return {
+                ...state,
+                places: action.places.map(place => {
+                    return new Place(place.id.toString(), place.title, place.imageUri)
+                }
+                ) 
+            }
+        case DELETE_PLACE: {
+            const filteredPlaces = state.places.filter(place => place.id !== action.placeId);
+            return {
+                ...state,
+                places: filteredPlaces
+            }
+        };
         default: 
             return state
     }

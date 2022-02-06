@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { View, Text, Image, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import * as placesActions from "../store/actions/places";
 import Colors from '../constants/Colors';
 
 const PlaceItem = props => {
+  const dispatch = useDispatch();
   return (
     <TouchableOpacity onPress={props.onSelect} style={styles.placeItem}>
       <Image style={styles.image} source={{ uri: props.image }} />
@@ -10,6 +13,7 @@ const PlaceItem = props => {
         <Text style={styles.title}>{props.title}</Text>
         <Text style={styles.address}>{props.address}</Text>
       </View>
+      <Button title="Remove" color="red" onPress={() => dispatch(placesActions.removePlace(props.placeId))} />
     </TouchableOpacity>
   );
 };
@@ -33,7 +37,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginLeft: 25,
-    width: 250,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'flex-start'
   },
