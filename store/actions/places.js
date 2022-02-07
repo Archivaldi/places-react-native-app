@@ -1,13 +1,28 @@
 import * as FileSystem from "expo-file-system";
 import { insertPlace, fetchPlaces, deletePlace } from "../../db/db";
+import GOOGLE_API_KEY from "../../env";
 
 export const ADD_PLACE = "ADD_PLACE";
 export const SET_PLACES = "SET_PLACES";
 export const DELETE_PLACE = "DELETE_PLACE";
 
-export const addPlace = (title, image) => {
+export const addPlace = (title, image, location) => {
 
     return async dispatch => {
+
+        //converting the coordinates into human readable address
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${GOOGLE_API_KEY.ios}`);
+        if (!response.ok){
+            throw new Error("Something went wrong");
+        };
+        const responseData = await response.json();
+        if (!responseData){
+            throw new Error("Something went wrong");
+        };
+
+        const address = responseData.results[0].formatted_address;
+
+        //saving adn moving the image
         const fileName = image.split("/").pop();
         const newPath = FileSystem.documentDirectory + fileName;
         try {
@@ -15,8 +30,8 @@ export const addPlace = (title, image) => {
                 from: image,
                 to: newPath
             });
-            const dbResult = await insertPlace(title, newPath, 'dammu address', 15.6, 12.3);
-            dispatch({ type: ADD_PLACE, placeData: { title, image: newPath, id: dbResult.insertId } });
+            const dbResult = await insertPlace(title, newPath, address, location.lat, location.lng);
+            dispatch({ type: ADD_PLACE, placeData: { title, image: newPath, id: dbResult.insertId, coords: {lat: location.lat, lng: location.lng} } });
         } catch (e) {
             console.log(e);
             throw e;

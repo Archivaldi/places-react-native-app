@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { TouchableOpacity, View, Button, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import Colors from '../constants/Colors';
 import * as Location from "expo-location";
@@ -8,6 +8,19 @@ function LocationPicker(props) {
 
     const [pickedLocation, setPickedLocation] = useState();
     const [isFetching, setIsFetching] = useState(false);
+
+    const mapPickedLocation = props.navigation.getParam("pickedLocation");
+
+    //we don't mapPickedLocation if we navigate from PlacesListScreen and it's going to be undefinded
+    //but we set up useEffect and if we come from MapScreen it's gonna change, useEffect will listen for its changes
+    //and then this function will trigger
+    const {onLocationPicked} = props;
+    useEffect(() => {
+        if(mapPickedLocation){
+            setPickedLocation(mapPickedLocation);
+            onLocationPicked(mapPickedLocation);
+        }
+    }, [onLocationPicked, mapPickedLocation])
 
     const pickOnMapHandler = () => {
         props.navigation.navigate("Map");
@@ -24,11 +37,16 @@ function LocationPicker(props) {
             const location = await Location.getCurrentPositionAsync({
                 timeout: 5000
             });
+            
             setIsFetching(false);
             setPickedLocation({
                 lat: location.coords.latitude,
                 lng: location.coords.longitude
-            })
+            });
+            onLocationPicked({
+                lat: location.coords.latitude,
+                lng: location.coords.longitude
+            });
         } catch (e) {
             console.log(e);
             throw e;

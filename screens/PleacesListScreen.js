@@ -30,7 +30,7 @@ function PlacesListScreen(props) {
                             placeId: itemData.item.id
                         })
                     }}
-                        placeId={itemData.item.id} image={itemData.item.image} title={itemData.item.title} address={"some address"}
+                        placeId={itemData.item.id} image={itemData.item.image} title={itemData.item.title} address={itemData.item.adress}
                     />
                 )
             }}
