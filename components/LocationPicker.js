@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, Button, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Button, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import Colors from '../constants/Colors';
 import * as Location from "expo-location";
 import MapPreview from './MapPreview';
@@ -8,6 +8,10 @@ function LocationPicker(props) {
 
     const [pickedLocation, setPickedLocation] = useState();
     const [isFetching, setIsFetching] = useState(false);
+
+    const pickOnMapHandler = () => {
+        props.navigation.navigate("Map");
+    }
 
     const getLocationHandler = async () => {
         const {status} = await Location.requestForegroundPermissionsAsync();
@@ -33,10 +37,13 @@ function LocationPicker(props) {
 
     return (
         <View style={styles.locationPicker}>
-            <MapPreview  style={styles.mapPreview} location={pickedLocation}>
+            <MapPreview onPress={pickOnMapHandler}  style={styles.mapPreview} location={pickedLocation}>
                 { isFetching ? <ActivityIndicator color={Colors.primary} size='small' /> : <Text>No location chosen yet</Text>}
             </MapPreview>
-            <Button title="Get User Location" color={Colors.primary} onPress={getLocationHandler} />
+            <View style={styles.actions}>
+                <Button title="Get User Location" color={Colors.primary} onPress={getLocationHandler} />
+                <Button title="Pick on Map" color={Colors.primary} onPress={pickOnMapHandler}/>
+            </View>
         </View>
     );
 };
@@ -51,6 +58,11 @@ const styles = StyleSheet.create({
         height: 150,
         borderColor: "#ccc",
         borderWidth: 1
+    },
+    actions: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: "100%"
     }
 });
 
